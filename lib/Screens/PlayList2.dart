@@ -298,7 +298,7 @@ class _PlayList2State extends State<PlayList2>
               vertical: widget.isShow ? 0 : 10,
               horizontal: widget.isShow ? 0 : 25),
           child: AnimatedContainer(
-            height: widget.isShow ? 0 : 30,
+            height: widget.isShow ? 0 : provider.heighCatTitle,
             duration: Duration(milliseconds: 100),
             child: LeftAnimation(
               0.9,
@@ -313,7 +313,9 @@ class _PlayList2State extends State<PlayList2>
           ),
         ),
         Container(
-          height: widget.isShow ? MediaQuery.of(context).size.height - 0 : 200,
+          height: widget.isShow
+              ? MediaQuery.of(context).size.height - 0
+              : provider.heighCat,
           child: Stack(
             children: <Widget>[
               AnimatedOpacity(
@@ -335,6 +337,8 @@ class _PlayList2State extends State<PlayList2>
                             //     new Duration(milliseconds: 600), () {
 
                             // });
+                            provider.setheighCat = 0;
+                            provider.setheighCatTitle = 0;
                             openAnimation();
                             title = widget.myList[index]['title'];
                             image = widget.myList[index]['image'];
@@ -522,6 +526,8 @@ class _PlayList2State extends State<PlayList2>
                                     size: 20,
                                   ),
                                   onPressed: () {
+                                    provider.setheighCat = 200;
+                                    provider.setheighCatTitle = 30;
                                     provider.setIsShow2 = false;
                                     openAnimation();
                                     setState(() {

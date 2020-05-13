@@ -298,7 +298,7 @@ class _PlayListState extends State<PlayList>
               vertical: widget.isShow ? 0 : 10,
               horizontal: widget.isShow ? 0 : 25),
           child: AnimatedContainer(
-            height: widget.isShow ? 0 : 30,
+            height: widget.isShow ? 0 : provider.heighCatTitle,
             duration: Duration(milliseconds: 100),
             child: LeftAnimation(
               0.9,
@@ -313,7 +313,9 @@ class _PlayListState extends State<PlayList>
           ),
         ),
         Container(
-          height: widget.isShow ? MediaQuery.of(context).size.height - 0 : 200,
+          height: widget.isShow
+              ? MediaQuery.of(context).size.height - 0
+              : provider.heighCat,
           child: Stack(
             children: <Widget>[
               AnimatedOpacity(
@@ -331,6 +333,8 @@ class _PlayListState extends State<PlayList>
                         0.2 + (index / 10),
                         GestureDetector(
                           onTap: () {
+                            provider.setheighCat = 0;
+                            provider.setheighCatTitle = 0;
                             // Future.delayed(
                             //     new Duration(milliseconds: 600), () {
 
@@ -522,6 +526,8 @@ class _PlayListState extends State<PlayList>
                                     size: 20,
                                   ),
                                   onPressed: () {
+                                    provider.setheighCat = 200;
+                                    provider.setheighCatTitle = 30;
                                     provider.setIsShow = false;
                                     openAnimation();
                                     setState(() {

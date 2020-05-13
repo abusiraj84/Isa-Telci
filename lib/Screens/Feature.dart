@@ -19,7 +19,7 @@ class _FeatureState extends State<Feature> {
     return Column(
       children: <Widget>[
         SizedBox(
-          height: provider.isShow ? 0 : 40,
+          height: provider.isShow || provider.isShow2 ? 0 : 40,
         ),
         FadeAnimation(
           0.5,
@@ -27,7 +27,7 @@ class _FeatureState extends State<Feature> {
             children: <Widget>[
               AnimatedContainer(
                 duration: Duration(milliseconds: 300),
-                height: provider.isShow ? 0 : 260,
+                height: provider.isShow || provider.isShow2 ? 0 : 260,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                     image: DecorationImage(
@@ -86,7 +86,7 @@ class _FeatureState extends State<Feature> {
           ),
         ),
         SizedBox(
-          height: provider.isShow ? 0 : 30,
+          height: provider.isShow || provider.isShow2 ? 0 : 30,
         )
       ],
     );
