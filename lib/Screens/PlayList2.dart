@@ -314,7 +314,7 @@ class _PlayList2State extends State<PlayList2>
         ),
         Container(
           height: widget.isShow
-              ? MediaQuery.of(context).size.height - 0
+              ? MediaQuery.of(context).size.height
               : provider.heighCat,
           child: Stack(
             children: <Widget>[

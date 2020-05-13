@@ -16,7 +16,6 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> showSheetAnimation;
-  Animation<double> showSheetAnimation2;
   Animation<double> opacity;
 
   @override
@@ -24,10 +23,7 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 100));
-    showSheetAnimation = Tween<double>(begin: 900, end: 0)
-        .chain(CurveTween(curve: Curves.easeInOut))
-        .animate(controller);
-    showSheetAnimation2 = Tween<double>(begin: 900, end: 0)
+    showSheetAnimation = Tween<double>(begin: 900, end: -10)
         .chain(CurveTween(curve: Curves.easeInOut))
         .animate(controller);
     opacity = Tween<double>(begin: 1, end: 0)
@@ -53,11 +49,15 @@ class _HomeScreenState extends State<HomeScreen>
         animation: controller,
         builder: (BuildContext context, Widget child) {
           return SingleChildScrollView(
-            physics: provider.isShow ? NeverScrollableScrollPhysics() : null,
+            physics: provider.isShow || provider.isShow2
+                ? NeverScrollableScrollPhysics()
+                : null,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Feature(),
+                Container(
+                    height: provider.isShow || provider.isShow2 ? 0 : 340,
+                    child: Feature()),
                 PlayList(
                     controller: controller,
                     myList: myList,
@@ -67,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen>
                 PlayList2(
                     controller: controller,
                     myList: myList2,
-                    showSheet: showSheetAnimation2,
+                    showSheet: showSheetAnimation,
                     opacity: opacity,
                     isShow: provider.isShow2)
               ],
