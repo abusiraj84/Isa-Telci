@@ -2,10 +2,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:isa_telci/Provider/provider.dart';
+import 'package:isa_telci/Screens/Categories.dart';
 import 'package:provider/provider.dart';
+import 'Soz.dart';
 import 'Feature.dart';
 import 'PlayList.dart';
-import 'PlayList2.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -17,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen>
   AnimationController controller;
   Animation<double> showSheetAnimation;
   Animation<double> opacity;
+  Animation<double> onTapScale;
 
   @override
   void initState() {
@@ -27,6 +29,10 @@ class _HomeScreenState extends State<HomeScreen>
         .chain(CurveTween(curve: Curves.easeInOut))
         .animate(controller);
     opacity = Tween<double>(begin: 1, end: 0)
+        .chain(CurveTween(curve: Curves.easeInOut))
+        .animate(controller);
+
+    onTapScale = Tween<double>(begin: 0.9, end: 1)
         .chain(CurveTween(curve: Curves.easeInOut))
         .animate(controller);
   }
@@ -44,32 +50,27 @@ class _HomeScreenState extends State<HomeScreen>
     final provider = Provider.of<MyProvider>(context, listen: false);
 
     return Scaffold(
-      backgroundColor: Color(0xff020202),
+      backgroundColor: Color(0xFF040513),
       body: AnimatedBuilder(
         animation: controller,
         builder: (BuildContext context, Widget child) {
           return SingleChildScrollView(
-            physics: provider.isShow || provider.isShow2
-                ? NeverScrollableScrollPhysics()
-                : null,
+            physics: provider.isShow ? NeverScrollableScrollPhysics() : null,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(
-                    height: provider.isShow || provider.isShow2 ? 0 : 340,
-                    child: Feature()),
+                Feature(
+                  onTapScale: onTapScale,
+                  controller: controller,
+                ),
+                Soz(),
                 PlayList(
                     controller: controller,
                     myList: myList,
                     showSheet: showSheetAnimation,
                     opacity: opacity,
                     isShow: provider.isShow),
-                PlayList2(
-                    controller: controller,
-                    myList: myList2,
-                    showSheet: showSheetAnimation,
-                    opacity: opacity,
-                    isShow: provider.isShow2)
+                Catecories()
               ],
             ),
           );

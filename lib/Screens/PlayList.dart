@@ -11,6 +11,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isa_telci/Animations/leftanimations.dart';
+import 'package:isa_telci/DB/database_helper.dart';
+import 'package:isa_telci/DB/favorite_model.dart';
 import 'package:isa_telci/Provider/provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:dio/dio.dart' as dioo;
@@ -29,10 +31,10 @@ class PlayList extends StatefulWidget {
       this.isShow})
       : super(key: key);
   final List myList;
-  bool isShow;
-  AnimationController controller;
-  var showSheet;
-  var opacity;
+  final bool isShow;
+  final AnimationController controller;
+  final Animation<double> showSheet;
+  final Animation<double> opacity;
 
   @override
   _PlayListState createState() => _PlayListState();
@@ -47,10 +49,16 @@ class _PlayListState extends State<PlayList>
   String cat;
   String image;
   String url;
-  double _value;
+  String album;
+  String seslendiren;
+  String siir;
   double scale;
   double screenHeight;
   bool isCliced;
+////// DataBase Helper /////
+  DatabaseHelper helper = DatabaseHelper();
+  Note note;
+
 //// AudioPlayer ////
   Duration _duration = new Duration();
   Duration _position = new Duration();
@@ -89,7 +97,9 @@ class _PlayListState extends State<PlayList>
     body = '';
     cat = '';
     url = '';
-    _value = 20;
+    seslendiren = '';
+    siir = '';
+    album = '';
     scale = 1;
     screenHeight = 0;
     isCliced = false;
@@ -98,6 +108,16 @@ class _PlayListState extends State<PlayList>
     downloadProgress = '';
     downloadProgressNoPercent = 0;
     _initAudioPlayer();
+    // add it to your class as a static member
+
+    // or as a local variable
+
+    // call this method when desired
+    List introAudios = [
+      audioCache.play('19moral.mp3'),
+      audioCache.play('10tutki.mp3'),
+      audioCache.play('26sensizlik.mp3'),
+    ];
   }
 
   @override
@@ -105,6 +125,7 @@ class _PlayListState extends State<PlayList>
     super.dispose();
 
     //AudioPlayer
+
     _audioPlayer.dispose();
     _durationSubscription?.cancel();
     _positionSubscription?.cancel();
@@ -270,6 +291,7 @@ class _PlayListState extends State<PlayList>
 
 //// Color /////
   ///
+
   List colors = [
     Colors.red,
     Colors.green[400],
@@ -345,6 +367,9 @@ class _PlayListState extends State<PlayList>
                             cat = widget.myList[index]['cat'];
                             body = widget.myList[index]['body'];
                             url = widget.myList[index]['url'];
+                            siir = widget.myList[index]['siir'];
+                            seslendiren = widget.myList[index]['seslendiren'];
+                            album = widget.myList[index]['album'];
 
                             setState(() {
                               provider.setIsShow = !widget.isShow;
@@ -369,7 +394,7 @@ class _PlayListState extends State<PlayList>
                               opacity: widget.opacity.value,
                               child: AnimatedContainer(
                                   duration: Duration(milliseconds: 400),
-                                  width: 200,
+                                  width: 186,
                                   height: 180,
                                   margin: EdgeInsets.only(left: 20),
                                   decoration: BoxDecoration(
@@ -404,7 +429,7 @@ class _PlayListState extends State<PlayList>
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
-                                              widget.myList[index]['cat'],
+                                              widget.myList[index]['album'],
                                               style: TextStyle(
                                                   color: Colors.white54),
                                             ),
@@ -566,7 +591,7 @@ class _PlayListState extends State<PlayList>
                             Align(
                               alignment: Alignment.center,
                               child: Text(
-                                'İsa Telci',
+                                album,
                                 style: TextStyle(
                                   color: Colors.white54,
                                   fontSize: 15,
@@ -597,7 +622,7 @@ class _PlayListState extends State<PlayList>
                                         height: 5,
                                       ),
                                       Text(
-                                        'İsa Telci',
+                                        seslendiren,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 15,
@@ -619,7 +644,7 @@ class _PlayListState extends State<PlayList>
                                   Column(
                                     children: <Widget>[
                                       Text(
-                                        'Şiir',
+                                        siir,
                                         style: TextStyle(
                                           color: Colors.white54,
                                           fontSize: 15,
@@ -903,7 +928,7 @@ class _PlayListState extends State<PlayList>
                                         size: 20,
                                       ),
                                       onPressed: () {
-                                        openAnimation();
+                                        print('Added');
                                       }),
                                 ),
                                 Container(
@@ -990,6 +1015,7 @@ class _PlayListState extends State<PlayList>
                   ),
                 ),
               ),
+
               AnimatedOpacity(
                 duration: Duration(milliseconds: 800),
                 opacity: overlayTime ? 1 : 0,
@@ -1030,10 +1056,14 @@ class _PlayListState extends State<PlayList>
                               color: colors[index],
                               borderRadius: BorderRadius.circular(200),
                             ),
-                            child: CircleAvatar(
-                              radius: 50,
-                              backgroundImage:
-                                  AssetImage('assets/images/isanew.jpg'),
+                            child: Stack(
+                              children: <Widget>[
+                                CircleAvatar(
+                                  radius: 50,
+                                  backgroundImage:
+                                      AssetImage('assets/images/isanew.jpg'),
+                                ),
+                              ],
                             ),
                           ),
                           SizedBox(
@@ -1045,6 +1075,15 @@ class _PlayListState extends State<PlayList>
                                 textStyle: TextStyle(
                                     color: colors[index],
                                     fontSize: 40,
+                                    letterSpacing: 0,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          Text(
+                            'Album : ${album}',
+                            style: GoogleFonts.grenze(
+                                textStyle: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 20,
                                     letterSpacing: 0,
                                     fontWeight: FontWeight.bold)),
                           ),
@@ -1063,7 +1102,7 @@ class _PlayListState extends State<PlayList>
                                 ?.first,
                             style: TextStyle(
                                 fontSize: 20,
-                                color: Colors.black,
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -1071,7 +1110,7 @@ class _PlayListState extends State<PlayList>
                     )),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
