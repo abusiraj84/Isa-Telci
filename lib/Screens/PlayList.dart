@@ -363,7 +363,6 @@ class _PlayListState extends State<PlayList>
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (BuildContext context, int index) {
                             // content = content['data'][index];
-                            print(content['data'][index]['album']['title']);
                             return LeftAnimation(
                               0.2 + (index / 10),
                               GestureDetector(
@@ -386,7 +385,7 @@ class _PlayListState extends State<PlayList>
                                   seslendiren = content['data'][index]
                                       ['seslendiren']['name'];
                                   album =
-                                      content['data'][index]['album']['title'];
+                                      content['data'][index]['albums']['title'];
 
                                   setState(() {
                                     provider.setIsShow = !widget.isShow;
@@ -454,7 +453,7 @@ class _PlayListState extends State<PlayList>
                                                 children: <Widget>[
                                                   Text(
                                                     content['data'][index]
-                                                        ['album']['title'],
+                                                        ['albums']['title'],
                                                     style: TextStyle(
                                                         color: Colors.white54),
                                                   ),
