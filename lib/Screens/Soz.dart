@@ -55,7 +55,7 @@ class Soz extends StatelessWidget {
             itemCount: 10,
             viewportFraction: 1,
             scale: 0.9,
-            autoplay: true,
+            autoplay: provider.isShow ? false : true,
             duration: 2000,
             autoplayDelay: 5000,
             scrollDirection: Axis.vertical,

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
@@ -38,10 +40,35 @@ class _FeatureState extends State<Feature> {
     }
   }
 
+  List images = [
+    'assets/images/isa.jpg',
+    'assets/images/isa3.jpg',
+    'assets/images/isa3.jpg',
+    'assets/images/isanew.jpg',
+    'assets/images/isa3.jpg',
+    'assets/images/isa3.jpg'
+  ];
+
+  List colors = [
+    Colors.red,
+    Colors.green[400],
+    Colors.yellow,
+    Colors.blue,
+    Colors.purple,
+    Colors.amber
+  ];
+  Random random = new Random();
+
+  int index = 0;
+
+  void changeIndex() {
+    setState(() => index = random.nextInt(5));
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<MyProvider>(context, listen: false);
-
+    changeIndex();
     return Column(
       children: <Widget>[
         SizedBox(
@@ -58,7 +85,7 @@ class _FeatureState extends State<Feature> {
                 decoration: BoxDecoration(
                     image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: AssetImage('assets/images/isanew.jpg'),
+                  image: AssetImage(images[index]),
                 )),
                 child: Container(
                   decoration: BoxDecoration(
@@ -83,7 +110,7 @@ class _FeatureState extends State<Feature> {
                         'İsa Telci',
                         style: GoogleFonts.dancingScript(
                             textStyle: TextStyle(
-                                color: Colors.yellow,
+                                color: colors[index],
                                 fontSize: 40,
                                 letterSpacing: 2,
                                 fontWeight: FontWeight.bold)),

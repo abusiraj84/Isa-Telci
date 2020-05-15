@@ -305,7 +305,7 @@ class _PlayListState extends State<PlayList>
   int index = 0;
 
   void changeIndex() {
-    setState(() => index = random.nextInt(3));
+    setState(() => index = random.nextInt(5));
   }
 
   @override
@@ -644,7 +644,7 @@ class _PlayListState extends State<PlayList>
                                   Column(
                                     children: <Widget>[
                                       Text(
-                                        siir,
+                                        'Şiir',
                                         style: TextStyle(
                                           color: Colors.white54,
                                           fontSize: 15,
@@ -655,7 +655,7 @@ class _PlayListState extends State<PlayList>
                                         height: 5,
                                       ),
                                       Text(
-                                        'İsa Telci',
+                                        siir,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 15,
@@ -928,7 +928,7 @@ class _PlayListState extends State<PlayList>
                                         size: 20,
                                       ),
                                       onPressed: () {
-                                        print('Added');
+                                        print('like');
                                       }),
                                 ),
                                 Container(
@@ -956,7 +956,7 @@ class _PlayListState extends State<PlayList>
                                         size: 20,
                                       ),
                                       onPressed: () {
-                                        openAnimation();
+                                        print('download');
                                       }),
                                 ),
                                 Container(
@@ -984,7 +984,7 @@ class _PlayListState extends State<PlayList>
                                         size: 20,
                                       ),
                                       onPressed: () {
-                                        openAnimation();
+                                        print('share');
                                       }),
                                 ),
                               ],
