@@ -14,9 +14,11 @@ import 'package:isa_telci/Animations/leftanimations.dart';
 import 'package:isa_telci/DB/database_helper.dart';
 import 'package:isa_telci/DB/favorite_model.dart';
 import 'package:isa_telci/Provider/provider.dart';
+import 'package:isa_telci/Services/api_service.dart';
 import 'package:lottie/lottie.dart';
 import 'package:dio/dio.dart' as dioo;
 import 'package:provider/provider.dart';
+import '../Models/Songs.dart';
 
 enum PlayerState { stopped, playing, paused }
 enum PlayingRouteState { speakers, earpiece }
@@ -42,6 +44,8 @@ class PlayList extends StatefulWidget {
 
 class _PlayListState extends State<PlayList>
     with SingleTickerProviderStateMixin {
+  ApiService _apiService;
+
   bool overlayTime = false;
   bool isComplated;
   String title;
@@ -90,6 +94,7 @@ class _PlayListState extends State<PlayList>
   @override
   void initState() {
     super.initState();
+    _apiService = ApiService();
 
     isComplated = false;
     title = '';
@@ -114,9 +119,9 @@ class _PlayListState extends State<PlayList>
 
     // call this method when desired
     List introAudios = [
-      audioCache.play('19moral.mp3'),
-      audioCache.play('10tutki.mp3'),
-      audioCache.play('26sensizlik.mp3'),
+      // audioCache.play('19moral.mp3'),
+      // audioCache.play('10tutki.mp3'),
+      // audioCache.play('26sensizlik.mp3'),
     ];
   }
 
@@ -347,147 +352,184 @@ class _PlayListState extends State<PlayList>
                   duration: Duration(milliseconds: 500),
                   height: 180,
                   // margin: EdgeInsets.only(top: 100),
-                  child: ListView.builder(
-                    itemCount: widget.myList.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (BuildContext context, int index) {
-                      return LeftAnimation(
-                        0.2 + (index / 10),
-                        GestureDetector(
-                          onTap: () {
-                            provider.setheighCat = 0;
-                            provider.setheighCatTitle = 0;
-                            // Future.delayed(
-                            //     new Duration(milliseconds: 600), () {
+                  child: FutureBuilder(
+                    future: _apiService.getSongs(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        Map content = snapshot.data;
 
-                            // });
-                            openAnimation();
-                            title = widget.myList[index]['title'];
-                            image = widget.myList[index]['image'];
-                            cat = widget.myList[index]['cat'];
-                            body = widget.myList[index]['body'];
-                            url = widget.myList[index]['url'];
-                            siir = widget.myList[index]['siir'];
-                            seslendiren = widget.myList[index]['seslendiren'];
-                            album = widget.myList[index]['album'];
+                        return ListView.builder(
+                          itemCount: content['data'].length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (BuildContext context, int index) {
+                            // content = content['data'][index];
+                            print(content['data'][index]['album']['title']);
+                            return LeftAnimation(
+                              0.2 + (index / 10),
+                              GestureDetector(
+                                onTap: () {
+                                  provider.setheighCat = 0;
+                                  provider.setheighCatTitle = 0;
+                                  // Future.delayed(
+                                  //     new Duration(milliseconds: 600), () {
 
-                            setState(() {
-                              provider.setIsShow = !widget.isShow;
-                              _play();
-                              changeIndex();
-                              isPlay = true;
-                              HapticFeedback.mediumImpact();
+                                  // });
+                                  openAnimation();
+                                  title = content['data'][index]['title'];
+                                  image = content['data'][index]['image'];
+                                  cat = content['data'][index]['category']
+                                      ['name'];
+                                  body = content['data'][index]['body'];
+                                  url = content['data'][index]['url'];
+                                  siir =
+                                      content['data'][index]['yazar']['name'];
+                                  seslendiren = content['data'][index]
+                                      ['seslendiren']['name'];
+                                  album =
+                                      content['data'][index]['album']['title'];
 
-                              Future.delayed(new Duration(seconds: 5), () {
-                                if (widget.isShow && isPlay) {
                                   setState(() {
-                                    overlayTime = true;
+                                    provider.setIsShow = !widget.isShow;
+                                    _play();
+                                    changeIndex();
+                                    isPlay = true;
+                                    audioCache.clearCache();
+                                    seekToSecond(0);
+                                    _duration = Duration(seconds: 0);
+                                    HapticFeedback.mediumImpact();
+
+                                    Future.delayed(new Duration(seconds: 12),
+                                        () {
+                                      if (widget.isShow && isPlay) {
+                                        setState(() {
+                                          overlayTime = true;
+                                        });
+                                      }
+                                    });
                                   });
-                                }
-                              });
-                            });
-                          },
-                          child: Transform.scale(
-                            scale: scale,
-                            child: AnimatedOpacity(
-                              duration: Duration(milliseconds: 400),
-                              opacity: widget.opacity.value,
-                              child: AnimatedContainer(
-                                  duration: Duration(milliseconds: 400),
-                                  width: 186,
-                                  height: 180,
-                                  margin: EdgeInsets.only(left: 20),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[900],
-                                    borderRadius: BorderRadius.circular(20),
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                        widget.myList[index]['image'],
-                                      ),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      gradient: LinearGradient(
-                                          begin: Alignment.center,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Colors.transparent,
-                                            Colors.black.withOpacity(0.6)
-                                          ]),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: LeftAnimation(
-                                        1 + (index / 4),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              widget.myList[index]['album'],
-                                              style: TextStyle(
-                                                  color: Colors.white54),
+                                },
+                                child: Transform.scale(
+                                  scale: scale,
+                                  child: AnimatedOpacity(
+                                    duration: Duration(milliseconds: 400),
+                                    opacity: widget.opacity.value,
+                                    child: AnimatedContainer(
+                                        duration: Duration(milliseconds: 400),
+                                        width: 186,
+                                        height: 180,
+                                        margin: EdgeInsets.only(left: 20),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[900],
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                              content['data'][index]['image'],
                                             ),
-                                            Align(
-                                              alignment: Alignment.center,
-                                              child: Stack(
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            gradient: LinearGradient(
+                                                begin: Alignment.center,
+                                                end: Alignment.bottomCenter,
+                                                colors: [
+                                                  Colors.transparent,
+                                                  Colors.black.withOpacity(0.6)
+                                                ]),
+                                          ),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(15.0),
+                                            child: LeftAnimation(
+                                              1 + (index / 4),
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: <Widget>[
-                                                  ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            100),
-                                                    child: BackdropFilter(
-                                                      filter: ImageFilter.blur(
-                                                          sigmaX: 5, sigmaY: 5),
-                                                      child: Container(
-                                                        width: 50,
-                                                        height: 50,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors.white
-                                                              .withOpacity(0.4),
+                                                  Text(
+                                                    content['data'][index]
+                                                        ['album']['title'],
+                                                    style: TextStyle(
+                                                        color: Colors.white54),
+                                                  ),
+                                                  Align(
+                                                    alignment: Alignment.center,
+                                                    child: Stack(
+                                                      children: <Widget>[
+                                                        ClipRRect(
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(
                                                                       100),
+                                                          child: BackdropFilter(
+                                                            filter: ImageFilter
+                                                                .blur(
+                                                                    sigmaX: 5,
+                                                                    sigmaY: 5),
+                                                            child: Container(
+                                                              width: 50,
+                                                              height: 50,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .white
+                                                                    .withOpacity(
+                                                                        0.4),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            100),
+                                                              ),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
+                                                        Positioned(
+                                                          width: 54,
+                                                          height: 50,
+                                                          child: Icon(
+                                                            SFSymbols.play_fill,
+                                                            color: Colors.white,
+                                                            size: 30,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
-                                                  Positioned(
-                                                    width: 54,
-                                                    height: 50,
-                                                    child: Icon(
-                                                      SFSymbols.play_fill,
-                                                      color: Colors.white,
-                                                      size: 30,
-                                                    ),
+                                                  Text(
+                                                    content['data'][index]
+                                                        ['title'],
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        letterSpacing: 2,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 18),
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                            Text(
-                                              widget.myList[index]['title'],
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  letterSpacing: 2,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 18),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  )),
-                            ),
+                                          ),
+                                        )),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return Container(
+                          height: 100,
+                          child: Center(
+                            child: CircularProgressIndicator(),
                           ),
-                        ),
-                      );
+                        );
+                      }
                     },
                   ),
                 ),

@@ -38,6 +38,7 @@ class Catecories extends StatelessWidget {
           duration: Duration(milliseconds: 300),
           height: provider.isShow ? 0 : null,
           child: GridView.builder(
+              padding: EdgeInsets.zero,
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: allList.length,
@@ -73,31 +74,58 @@ class Catecories extends StatelessWidget {
                             ]),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(15.0),
                         child: Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 5),
-                              decoration: BoxDecoration(
-                                color: Color(0xff8C8B92).withOpacity(0.4),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
+                          alignment: Alignment.topLeft,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  Lottie.asset(
-                                      'assets/21843-creativity-love.json',
-                                      width: 50),
-                                  Text(
-                                    allList[index]['cat'],
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 18),
+                                  Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 5),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            Color(0xFF8C2381).withOpacity(0.8),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        'YENİ',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 10),
+                                      )),
+                                  CircleAvatar(
+                                    backgroundColor:
+                                        Color(0xFFCED20A).withOpacity(0.8),
+                                    radius: 12,
+                                    child: Text(
+                                      '5',
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 10),
+                                    ),
                                   ),
                                 ],
-                              )),
+                              ),
+                              Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFF1C5E91).withOpacity(0.8),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    allList[index]['cat'],
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                                  )),
+                            ],
+                          ),
                         ),
                       ),
                     ),

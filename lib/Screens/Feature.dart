@@ -71,16 +71,13 @@ class _FeatureState extends State<Feature> {
     changeIndex();
     return Column(
       children: <Widget>[
-        SizedBox(
-          height: provider.isShow ? 0 : 40,
-        ),
         ScaleAnimation(
           0.5,
           Stack(
             children: <Widget>[
               AnimatedContainer(
                 duration: Duration(milliseconds: 300),
-                height: provider.isShow ? 0 : 260,
+                height: provider.isShow ? 0 : 300,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                     image: DecorationImage(
@@ -91,15 +88,15 @@ class _FeatureState extends State<Feature> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(colors: [
                       Colors.transparent,
-                      Color(0xFF040513).withOpacity(0.6),
-                      Color(0xFF040513)
+                      Color(0xFF0B0D2B).withOpacity(0.6),
+                      Color(0xFF0B0D2B)
                     ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
                   ),
                 ),
               ),
               Positioned(
                 width: MediaQuery.of(context).size.width,
-                bottom: 15,
+                bottom: 40,
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: FadeAnimation(
@@ -121,7 +118,7 @@ class _FeatureState extends State<Feature> {
               ),
               Positioned(
                 width: MediaQuery.of(context).size.width,
-                bottom: 0,
+                bottom: 10,
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: FadeAnimation(
@@ -130,10 +127,10 @@ class _FeatureState extends State<Feature> {
                       4.0,
                       Text(
                         'Yaratana ve yaratılana saygılı ol',
-                        style: GoogleFonts.dancingScript(
+                        style: GoogleFonts.sacramento(
                             textStyle: TextStyle(
                           color: Colors.white,
-                          fontSize: 15,
+                          fontSize: 20,
                           letterSpacing: 2,
                         )),
                       ),
@@ -142,7 +139,7 @@ class _FeatureState extends State<Feature> {
                 ),
               ),
               Positioned(
-                  top: 10,
+                  top: 30,
                   right: 20,
                   child: Transform.scale(
                     scale: tapped,
@@ -175,7 +172,7 @@ class _FeatureState extends State<Feature> {
                     ),
                   )),
               Positioned(
-                top: 10,
+                top: 30,
                 left: 20,
                 child: FadeAnimation(
                   6,

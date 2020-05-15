@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen>
     final provider = Provider.of<MyProvider>(context, listen: false);
 
     return Scaffold(
-      backgroundColor: Color(0xFF040513),
+      backgroundColor: Color(0xFF0B0D2B),
       body: AnimatedBuilder(
         animation: controller,
         builder: (BuildContext context, Widget child) {
