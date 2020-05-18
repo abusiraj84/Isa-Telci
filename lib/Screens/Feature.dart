@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
@@ -57,6 +58,16 @@ class _FeatureState extends State<Feature> {
     Colors.purple,
     Colors.amber
   ];
+
+  List baslik = [
+    'Yaratana ve yaratılana saygılı ol ',
+    'Başladığın cümleyi bitiremezsen, gelir başkası noktayı koyar',
+    'Aşk, iki kişiden tek kişi oluncaya dek, sadece bir kelimeden ibarettir.',
+    'Yaratana ve yaratılana saygılı ol ',
+    'Başladığın cümleyi bitiremezsen, gelir başkası noktayı koyar',
+    'Aşk, iki kişiden tek kişi oluncaya dek, sadece bir kelimeden ibarettir.',
+  ];
+
   Random random = new Random();
 
   int index = 0;
@@ -96,7 +107,7 @@ class _FeatureState extends State<Feature> {
               ),
               Positioned(
                 width: MediaQuery.of(context).size.width,
-                bottom: 40,
+                bottom: 45,
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: FadeAnimation(
@@ -118,21 +129,37 @@ class _FeatureState extends State<Feature> {
               ),
               Positioned(
                 width: MediaQuery.of(context).size.width,
-                bottom: 10,
+                bottom: 20,
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: FadeAnimation(
                     0.9,
                     ScaleAnimation(
                       4.0,
-                      Text(
-                        'Yaratana ve yaratılana saygılı ol',
-                        style: GoogleFonts.sacramento(
+                      Container(
+                        alignment: Alignment.center,
+                        width: 500,
+                        child: FadeAnimatedTextKit(
+                            isRepeatingAnimation: true,
+                            totalRepeatCount: 100000,
+                            duration: Duration(milliseconds: 5000),
+                            pause: Duration(milliseconds: 500),
+                            onTap: () {
+                              print("Tap Event");
+                            },
+                            text: [
+                              "Yaratana ve yaratılana saygılı ol",
+                              "Başladığın cümleyi bitiremezsen, gelir başkası noktayı koyar",
+                              "Aşk, iki kişiden tek kişi oluncaya dek, sadece bir kelimeden ibarettir.",
+                            ],
                             textStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          letterSpacing: 2,
-                        )),
+                                fontSize: 14.0,
+                                fontFamily: "Agne",
+                                color: Colors.white),
+                            textAlign: TextAlign.center,
+                            alignment: AlignmentDirectional
+                                .topStart // or Alignment.topLeft
+                            ),
                       ),
                     ),
                   ),

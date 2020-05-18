@@ -17,9 +17,22 @@ class Catecories extends StatefulWidget {
 
 class _CatecoriesState extends State<Catecories> {
   ApiService _apiService;
+  int songsCount = 0;
+  int albumsCount = 0;
   @override
   void initState() {
     _apiService = ApiService();
+    _apiService.getSongs().then((data) {
+      setState(() {
+        songsCount = data['total'] == null ? 0 : data['total'];
+      });
+    });
+    _apiService.getAlbums().then((data) {
+      setState(() {
+        albumsCount = data['total'] == null ? 0 : data['total'];
+      });
+    });
+
     super.initState();
   }
 
@@ -37,12 +50,48 @@ class _CatecoriesState extends State<Catecories> {
             duration: Duration(milliseconds: 100),
             child: LeftAnimation(
               0.9,
-              Text(
-                'Albumlar',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Albumlar',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFAAAAAA),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          "Şiir Toplamı: " + songsCount.toString(),
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Color(0xFF1CCB9C),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          "Album Toplamı: " + albumsCount.toString(),
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
               ),
             ),
           ),
@@ -55,6 +104,7 @@ class _CatecoriesState extends State<Catecories> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 Map content = snapshot.data;
+
                 return GridView.builder(
                     padding: EdgeInsets.zero,
                     physics: NeverScrollableScrollPhysics(),
@@ -71,7 +121,9 @@ class _CatecoriesState extends State<Catecories> {
                               builder: (context) => ShowCat(
                                 id: content['data'][index]['id'],
                                 albumTitle: content['data'][index]['title'],
-                                image: content['data'][index]['image'],
+                                image:
+                                    'http://167.71.44.144/admin/_lib/file/img/' +
+                                        content['data'][index]['image'],
                               ),
                             ));
                           },
@@ -81,8 +133,9 @@ class _CatecoriesState extends State<Catecories> {
                               color: Color(0xFF616161),
                               borderRadius: BorderRadius.circular(12),
                               image: DecorationImage(
-                                  image: AssetImage(
-                                    allList[index]['image'],
+                                  image: NetworkImage(
+                                    'http://167.71.44.144/admin/_lib/file/img/' +
+                                        content['data'][index]['image'],
                                   ),
                                   fit: BoxFit.cover),
                               gradient: LinearGradient(
@@ -110,46 +163,34 @@ class _CatecoriesState extends State<Catecories> {
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 20, vertical: 5),
                                             decoration: BoxDecoration(
-                                              color: Color(0xFF8C2381)
+                                              color: Color(0xFF1C5E91)
                                                   .withOpacity(0.8),
                                               borderRadius:
                                                   BorderRadius.circular(12),
                                             ),
                                             child: Text(
-                                              'YENİ',
+                                              content['data'][index]['title'],
                                               style: TextStyle(
                                                   color: Colors.white,
-                                                  fontSize: 10),
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold),
                                             )),
                                         CircleAvatar(
                                           backgroundColor: Color(0xFFCED20A)
                                               .withOpacity(0.8),
                                           radius: 12,
                                           child: Text(
-                                            '5',
+                                            content['data'][index]['songs']
+                                                .length
+                                                .toString(),
                                             style: TextStyle(
                                                 color: Colors.black,
+                                                fontWeight: FontWeight.bold,
                                                 fontSize: 10),
                                           ),
                                         ),
                                       ],
                                     ),
-                                    Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 20, vertical: 5),
-                                        decoration: BoxDecoration(
-                                          color: Color(0xFF1C5E91)
-                                              .withOpacity(0.8),
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: Text(
-                                          content['data'][index]['title'],
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
-                                        )),
                                   ],
                                 ),
                               ),
@@ -162,7 +203,9 @@ class _CatecoriesState extends State<Catecories> {
                 return Container(
                   height: 100,
                   child: Center(
-                    child: CircularProgressIndicator(),
+                    child: Lottie.network(
+                        'https://assets6.lottiefiles.com/packages/lf20_ZeRz5S.json',
+                        width: 200),
                   ),
                 );
               }

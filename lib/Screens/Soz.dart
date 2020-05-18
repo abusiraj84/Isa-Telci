@@ -38,14 +38,14 @@ class Soz extends StatelessWidget {
                   children: <Widget>[
                     Lottie.asset('assets/16558-heart-break.json', width: 60),
                     Container(
-                      width: MediaQuery.of(context).size.width - 140,
+                      width: MediaQuery.of(context).size.width - 150,
                       child: Text(
-                        'Yer yüzünde yâr yüzüne hasret bırakan dünya değil misin ?',
-                        style: GoogleFonts.merienda(
+                        'HANİ O ARALIKLARLA VERDİĞİN ÖĞÜTLER VARDI YA ÖYLE BİR ZAMANDA ÖYLE BİR GEDİĞİNE OTURUYOR Kİ',
+                        style: GoogleFonts.robotoSlab(
                             textStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                        )),
+                                color: Colors.white,
+                                fontSize: 12,
+                                height: 1.8)),
                       ),
                     )
                   ],
@@ -57,7 +57,7 @@ class Soz extends StatelessWidget {
             scale: 0.9,
             autoplay: provider.isShow ? false : true,
             duration: 2000,
-            autoplayDelay: 5000,
+            autoplayDelay: 8000,
             scrollDirection: Axis.vertical,
             curve: Curves.easeInOutSine,
           ),

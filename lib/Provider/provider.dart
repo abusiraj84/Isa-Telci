@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:isa_telci/Services/api_service.dart';
 
 class MyProvider with ChangeNotifier {
   bool _isShow = false;
@@ -23,6 +24,30 @@ class MyProvider with ChangeNotifier {
   set setheighCatTitle(double val) {
     _heighCatTitle = val;
     notifyListeners();
+  }
+
+///// Get All Songs Count //////
+  ///
+  int _allCount = 0;
+  int get allCount => _allCount;
+  set setAllCount(int val) {
+    _allCount = val;
+    notifyListeners();
+  }
+
+  int songsCount = 0;
+  // print('ccc' + songsCount.toString());
+  int get index {
+    ApiService().getSongs().then((onValue) {
+      try {
+        songsCount = onValue['total'] == null ? 0 : onValue['total'];
+      } catch (e) {
+        songsCount = 0;
+        print(e.toString());
+      }
+      notifyListeners();
+    });
+    return songsCount;
   }
 }
 

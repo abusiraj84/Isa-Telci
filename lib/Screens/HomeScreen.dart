@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 100));
-    showSheetAnimation = Tween<double>(begin: 900, end: -10)
+    showSheetAnimation = Tween<double>(begin: 900, end: 0)
         .chain(CurveTween(curve: Curves.easeInOut))
         .animate(controller);
     opacity = Tween<double>(begin: 1, end: 0)
@@ -44,6 +44,11 @@ class _HomeScreenState extends State<HomeScreen>
     //AudioPlayer
   }
 
+  Future<Null> getRefresfh() async {
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
@@ -51,30 +56,35 @@ class _HomeScreenState extends State<HomeScreen>
 
     return Scaffold(
       backgroundColor: Color(0xFF0B0D2B),
-      body: AnimatedBuilder(
-        animation: controller,
-        builder: (BuildContext context, Widget child) {
-          return SingleChildScrollView(
-            physics: provider.isShow ? NeverScrollableScrollPhysics() : null,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Feature(
-                  onTapScale: onTapScale,
-                  controller: controller,
-                ),
-                Soz(),
-                PlayList(
+      body: RefreshIndicator(
+        onRefresh: getRefresfh,
+        backgroundColor: Colors.black54,
+        color: Colors.yellow,
+        child: AnimatedBuilder(
+          animation: controller,
+          builder: (BuildContext context, Widget child) {
+            return SingleChildScrollView(
+              physics: provider.isShow ? NeverScrollableScrollPhysics() : null,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Feature(
+                    onTapScale: onTapScale,
                     controller: controller,
-                    myList: myList,
-                    showSheet: showSheetAnimation,
-                    opacity: opacity,
-                    isShow: provider.isShow),
-                Catecories()
-              ],
-            ),
-          );
-        },
+                  ),
+                  Soz(),
+                  PlayList(
+                      controller: controller,
+                      myList: myList,
+                      showSheet: showSheetAnimation,
+                      opacity: opacity,
+                      isShow: provider.isShow),
+                  Catecories()
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

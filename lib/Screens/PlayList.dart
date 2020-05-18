@@ -8,7 +8,10 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isa_telci/Animations/leftanimations.dart';
 import 'package:isa_telci/DB/database_helper.dart';
@@ -98,7 +101,7 @@ class _PlayListState extends State<PlayList>
 
     isComplated = false;
     title = '';
-    image = 'assets/images/1.jpg';
+    image = '1.jpg';
     body = '';
     cat = '';
     url = '';
@@ -119,9 +122,9 @@ class _PlayListState extends State<PlayList>
 
     // call this method when desired
     List introAudios = [
-      // audioCache.play('19moral.mp3'),
-      // audioCache.play('10tutki.mp3'),
-      // audioCache.play('26sensizlik.mp3'),
+      audioCache.play('19moral.mp3'),
+      audioCache.play('10tutki.mp3'),
+      audioCache.play('26sensizlik.mp3'),
     ];
   }
 
@@ -300,7 +303,7 @@ class _PlayListState extends State<PlayList>
   List colors = [
     Colors.red,
     Colors.green[400],
-    Colors.yellow,
+    Colors.yellow[800],
     Colors.blue,
     Colors.purple,
     Colors.amber
@@ -316,7 +319,6 @@ class _PlayListState extends State<PlayList>
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<MyProvider>(context, listen: false);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -339,7 +341,8 @@ class _PlayListState extends State<PlayList>
             ),
           ),
         ),
-        Container(
+        AnimatedContainer(
+          duration: Duration(milliseconds: 400),
           height: widget.isShow
               ? MediaQuery.of(context).size.height - 0
               : provider.heighCat,
@@ -362,7 +365,6 @@ class _PlayListState extends State<PlayList>
                           itemCount: content['data'].length,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (BuildContext context, int index) {
-                            // content = content['data'][index];
                             return LeftAnimation(
                               0.2 + (index / 10),
                               GestureDetector(
@@ -422,13 +424,16 @@ class _PlayListState extends State<PlayList>
                                           borderRadius:
                                               BorderRadius.circular(20),
                                           image: DecorationImage(
-                                            image: AssetImage(
-                                              content['data'][index]['image'],
+                                            image: NetworkImage(
+                                              'http://167.71.44.144/admin/_lib/file/img/' +
+                                                  content['data'][index]
+                                                      ['image'],
                                             ),
                                             fit: BoxFit.cover,
                                           ),
                                         ),
-                                        child: Container(
+                                        child: AnimatedContainer(
+                                          duration: Duration(milliseconds: 400),
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(20),
@@ -440,7 +445,9 @@ class _PlayListState extends State<PlayList>
                                                   Colors.black.withOpacity(0.6)
                                                 ]),
                                           ),
-                                          child: Container(
+                                          child: AnimatedContainer(
+                                            duration:
+                                                Duration(milliseconds: 400),
                                             padding: const EdgeInsets.all(15.0),
                                             child: LeftAnimation(
                                               1 + (index / 4),
@@ -451,11 +458,47 @@ class _PlayListState extends State<PlayList>
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: <Widget>[
-                                                  Text(
-                                                    content['data'][index]
-                                                        ['albums']['title'],
-                                                    style: TextStyle(
-                                                        color: Colors.white54),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        content['data'][index]
+                                                            ['albums']['title'],
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white54),
+                                                      ),
+                                                      index <= 4
+                                                          ? Container(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          20,
+                                                                      vertical:
+                                                                          5),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Color(
+                                                                        0xFF000000)
+                                                                    .withOpacity(
+                                                                        0.8),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12),
+                                                              ),
+                                                              child: Text(
+                                                                'YENİ',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize:
+                                                                        10),
+                                                              ))
+                                                          : Container(),
+                                                    ],
                                                   ),
                                                   Align(
                                                     alignment: Alignment.center,
@@ -522,12 +565,17 @@ class _PlayListState extends State<PlayList>
                           },
                         );
                       } else {
-                        return Container(
-                          height: 100,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
+                        return Center(
+                            child: isPlay
+                                ? Lottie.asset(
+                                    'https://assets6.lottiefiles.com/packages/lf20_ZeRz5S.json',
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Container(
+                                    height: 100,
+                                  ));
                       }
                     },
                   ),
@@ -538,7 +586,13 @@ class _PlayListState extends State<PlayList>
 
               Opacity(
                 opacity: isComplated ? 1 : 0,
-                child: Center(child: CircularProgressIndicator()),
+                child: Center(
+                    child: Container(
+                  height: isComplated ? 200 : 0,
+                  child: Lottie.network(
+                      'https://assets6.lottiefiles.com/packages/lf20_ZeRz5S.json',
+                      width: 100),
+                )),
               ),
               /////////////////////////////////////////Play Screen/////////////////////////////////////////
               ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -556,8 +610,8 @@ class _PlayListState extends State<PlayList>
                     ),
                     child: Stack(
                       children: <Widget>[
-                        Image.asset(
-                          image,
+                        Image.network(
+                          'http://167.71.44.144/admin/_lib/file/img/' + image,
                           fit: BoxFit.cover,
                           height: MediaQuery.of(context).size.height,
                         ),
@@ -619,7 +673,7 @@ class _PlayListState extends State<PlayList>
                                 title,
                                 style: GoogleFonts.dancingScript(
                                     textStyle: TextStyle(
-                                        color: Colors.yellow,
+                                        color: Colors.yellow[800],
                                         fontSize: 30,
                                         letterSpacing: 2,
                                         fontWeight: FontWeight.bold)),
@@ -916,8 +970,14 @@ class _PlayListState extends State<PlayList>
                             ),
                             Align(
                               alignment: Alignment.center,
-                              child: Lottie.asset('assets/2881-music-fly.json',
-                                  width: 160, fit: BoxFit.cover),
+                              child: isPlay
+                                  ? Lottie.asset('assets/2881-music-fly.json',
+                                      width: 160,
+                                      height: 160,
+                                      fit: BoxFit.cover)
+                                  : Container(
+                                      height: 160,
+                                    ),
                             ),
                             SizedBox(
                               height: 0,
@@ -931,11 +991,19 @@ class _PlayListState extends State<PlayList>
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Text(
-                                    _position?.toString()?.split('.')?.first,
+                                    _position
+                                        .toString()
+                                        .split('.')
+                                        .first
+                                        .substring(2),
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   Text(
-                                    _duration?.toString()?.split('.')?.first,
+                                    _duration
+                                        .toString()
+                                        .split('.')
+                                        .first
+                                        .substring(2),
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ],
@@ -1047,8 +1115,8 @@ class _PlayListState extends State<PlayList>
                   opacity: overlayTime ? 1 : 0,
                   child: Transform.scale(
                     scale: 1 + _position.inMicroseconds.toDouble() / 100000000,
-                    child: Image.asset(
-                      image,
+                    child: Image.network(
+                      'http://167.71.44.144/admin/_lib/file/img/' + image,
                       height:
                           overlayTime ? MediaQuery.of(context).size.height : 0,
                       fit: BoxFit.cover,
@@ -1072,6 +1140,7 @@ class _PlayListState extends State<PlayList>
                       }
                     });
                   },
+                  //////////////////////// // OverLay //////////////////////////////////////////
                   child: Container(
                     height:
                         overlayTime ? MediaQuery.of(context).size.height : 0,
@@ -1079,10 +1148,10 @@ class _PlayListState extends State<PlayList>
                     color: colors[index].withOpacity(0.2),
                     child: Center(
                         child: Container(
-                      height: 400,
-                      width: 300,
+                      height: MediaQuery.of(context).size.height - 80,
+                      width: MediaQuery.of(context).size.width - 40,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withOpacity(0.9),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Column(
@@ -1115,36 +1184,133 @@ class _PlayListState extends State<PlayList>
                             style: GoogleFonts.marckScript(
                                 textStyle: TextStyle(
                                     color: colors[index],
-                                    fontSize: 40,
+                                    fontSize: 35,
                                     letterSpacing: 0,
                                     fontWeight: FontWeight.bold)),
                           ),
                           Text(
                             'Album : ${album}',
-                            style: GoogleFonts.grenze(
+                            style: GoogleFonts.alegreyaSans(
                                 textStyle: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    letterSpacing: 0,
-                                    fontWeight: FontWeight.bold)),
+                              color: Colors.black87,
+                              fontSize: 20,
+                              letterSpacing: 0,
+                            )),
                           ),
-                          SizedBox(
-                            height: 25,
+                          _position <= Duration(seconds: 1)
+                              ? AnimatedContainer(
+                                  duration: Duration(milliseconds: 400),
+                                  child: Lottie.asset(
+                                      'assets/12629-downloading.json',
+                                      width: 40,
+                                      height: 40),
+                                )
+                              : AnimatedContainer(
+                                  duration: Duration(milliseconds: 400),
+                                  height: 10),
+                          AnimatedContainer(
+                            duration: Duration(milliseconds: 400),
+                            alignment: Alignment.topCenter,
+                            height: 380,
+                            width: MediaQuery.of(context).size.width - 10,
+                            child: ListView(
+                              padding: EdgeInsets.zero,
+                              children: <Widget>[
+                                HtmlWidget(
+                                  body,
+                                  textStyle: TextStyle(fontSize: 17),
+                                ),
+                              ],
+                            ),
                           ),
-                          Lottie.asset(
-                            'assets/8490-audio-wave-micro-interaction.json',
-                            width: 100,
-                            fit: BoxFit.cover,
+                          isPlay
+                              ? Lottie.asset(
+                                  'assets/8490-audio-wave-micro-interaction.json',
+                                  width: 70,
+                                  height: 70,
+                                  fit: BoxFit.cover,
+                                )
+                              : AnimatedContainer(
+                                  duration: Duration(milliseconds: 400),
+                                  height: 70,
+                                ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              IconButton(
+                                  icon: Icon(
+                                    SFSymbols.stop_circle_fill,
+                                    size: 40,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      isPlay = !isPlay;
+                                      if (_playerState == PlayerState.playing) {
+                                        _pause();
+                                      } else {
+                                        _play();
+                                        setState(() {
+                                          overlayTime = false;
+                                          isPlay = false;
+
+                                          _stop();
+                                        });
+                                      }
+                                    });
+                                  }),
+                              IconButton(
+                                  icon: Icon(
+                                      isPlay
+                                          ? SFSymbols.pause_circle_fill
+                                          : SFSymbols.play_circle_fill,
+                                      size: 40,
+                                      color: isPlay
+                                          ? colors[index]
+                                          : Colors.black),
+                                  onPressed: () {
+                                    setState(() {
+                                      isPlay = !isPlay;
+                                      if (_playerState == PlayerState.playing) {
+                                        _pause();
+                                      } else {
+                                        _play();
+                                      }
+                                    });
+                                  }),
+                              slider(),
+                            ],
                           ),
-                          Text(
-                            (_duration - _position)
-                                .toString()
-                                ?.split('.')
-                                ?.first,
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 25.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  (_duration - _position)
+                                      .toString()
+                                      .split('.')
+                                      .first
+                                      .substring(2),
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey.shade700,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  _duration
+                                      .toString()
+                                      .split('.')
+                                      .first
+                                      .substring(2),
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey.shade700,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
