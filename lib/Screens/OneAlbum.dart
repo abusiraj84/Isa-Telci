@@ -19,20 +19,23 @@ import 'package:isa_telci/Screens/AllSongs.dart';
 import 'package:isa_telci/Services/api_service.dart';
 import 'package:lottie/lottie.dart';
 import 'package:dio/dio.dart' as dioo;
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import '../Models/Songs.dart';
 
 enum PlayerState { stopped, playing, paused }
 enum PlayingRouteState { speakers, earpiece }
 
-class PlayList extends StatefulWidget {
-  PlayList(
+class OneAlbum extends StatefulWidget {
+  OneAlbum(
       {Key key,
       this.myList,
       this.controller,
       this.opacity,
       this.showSheet,
-      this.isShow})
+      this.isShow,
+      this.albumTitle,
+      this.albumList})
       : super(key: key);
 
   final AnimationController controller;
@@ -40,12 +43,14 @@ class PlayList extends StatefulWidget {
   final List myList;
   final Animation<double> opacity;
   final Animation<double> showSheet;
+  final String albumTitle;
+  final List albumList;
 
   @override
-  _PlayListState createState() => _PlayListState();
+  _OneAlbumState createState() => _OneAlbumState();
 }
 
-class _PlayListState extends State<PlayList>
+class _OneAlbumState extends State<OneAlbum>
     with SingleTickerProviderStateMixin {
   String album;
   String audio;
@@ -245,7 +250,7 @@ class _PlayListState extends State<PlayList>
   }
 
   void _initAudioPlayer() {
-    _audioPlayer = new AudioPlayer(mode: PlayerMode.LOW_LATENCY);
+    _audioPlayer = new AudioPlayer(mode: mode);
     audioCache = new AudioCache(fixedPlayer: _audioPlayer);
     _durationSubscription = _audioPlayer.onDurationChanged.listen((duration) {
       setState(() => _duration = duration);
@@ -368,7 +373,7 @@ class _PlayListState extends State<PlayList>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    'Son Eklenenler',
+                    widget.albumTitle,
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -420,287 +425,269 @@ class _PlayListState extends State<PlayList>
                   duration: Duration(milliseconds: 500),
                   height: 180,
                   // margin: EdgeInsets.only(top: 100),
-                  child: FutureBuilder(
-                    future: _apiService.getSongs(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData) {
-                        Map content = snapshot.data;
+                  child: ListView.builder(
+                    itemCount: widget.albumList.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext context, int index) {
+                      return LeftAnimation(
+                        0.2 + (index / 100),
+                        FlatButton(
+                          onPressed: () {
+                            provider.setheighCat = 0;
+                            provider.setheighCatTitle = 0;
+                            // Future.delayed(
+                            //     new Duration(milliseconds: 600), () {
 
-                        return ListView.builder(
-                          itemCount: content['data'].length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (BuildContext context, int index) {
-                            return LeftAnimation(
-                              0.2 + (index / 100),
-                              GestureDetector(
-                                onTap: () {
-                                  provider.setheighCat = 0;
-                                  provider.setheighCatTitle = 0;
-                                  // Future.delayed(
-                                  //     new Duration(milliseconds: 600), () {
+                            // });
+                            // openAnimation();
 
-                                  // });
-                                  openAnimation();
-                                  title = content['data'][index]['title'];
-                                  image = content['data'][index]['image'];
-                                  cat = content['data'][index]['category']
-                                      ['name'];
-                                  body = content['data'][index]['body'];
-                                  url = content['data'][index]['url'];
-                                  siir =
-                                      content['data'][index]['yazar']['name'];
-                                  seslendiren = content['data'][index]
-                                      ['seslendiren']['name'];
-                                  album =
-                                      content['data'][index]['albums']['title'];
+                            // title = widget.albumList[index]['title'];
+                            image = widget.albumList[index]['image'];
+                            // cat = widget.albumList[index]['category']['name'] ??
+                            //     '';
+                            // body = widget.albumList[index]['body'];
+                            url = widget.albumList[index]['url'];
+                            // siir = widget.albumList[index]['yazar']['name'];
+                            // seslendiren =
+                            //     widget.albumList[index]['seslendiren']['name'];
 
-                                  setState(() {
-                                    provider.setIsShow = !widget.isShow;
-                                    _play();
-                                    changeIndex();
-                                    isPlay = true;
-                                    audioCache.clearCache();
-                                    seekToSecond(0);
-                                    _duration = Duration(seconds: 0);
-                                    HapticFeedback.mediumImpact();
+                            // print(title);
 
-                                    Future.delayed(new Duration(seconds: 12),
-                                        () {
-                                      if (widget.isShow && isPlay) {
-                                        setState(() {
-                                          overlayTime = true;
-                                        });
-                                      }
-                                    });
-                                  });
-                                },
-                                child: Transform.scale(
-                                  scale: scale,
-                                  child: AnimatedOpacity(
-                                    duration: Duration(milliseconds: 400),
-                                    opacity: widget.opacity.value,
-                                    child: AnimatedContainer(
-                                        duration: Duration(milliseconds: 400),
-                                        width: 186,
-                                        height: 180,
-                                        margin: EdgeInsets.only(
-                                            left: 20, bottom: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[900],
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          boxShadow: [
-                                            BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(0.45),
-                                                blurRadius: 5,
-                                                offset: Offset(0, 2.5))
-                                          ],
-                                          image: DecorationImage(
-                                            image: NetworkImage(
-                                              'http://167.71.44.144/admin/_lib/file/img/' +
-                                                  content['data'][index]
-                                                      ['image'],
+                            // setState(() {
+                            //   provider.setIsShow = !widget.isShow;
+                            //   _play();
+                            //   changeIndex();
+                            //   isPlay = true;
+                            //   audioCache.clearCache();
+                            //   seekToSecond(0);
+                            //   _duration = Duration(seconds: 0);
+                            //   HapticFeedback.mediumImpact();
+
+                            //   Future.delayed(new Duration(seconds: 12), () {
+                            //     if (widget.isShow && isPlay) {
+                            //       setState(() {
+                            //         overlayTime = true;
+                            //       });
+                            //     }
+                            //   });
+                            // });
+                            showCupertinoModalBottomSheet(
+                                context: context,
+                                builder: (context, scrollController) =>
+                                    Material(
+                                      child: Container(
+                                        padding: EdgeInsets.all(20),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: Image.network(
+                                                'http://167.71.44.144/admin/_lib/file/img/' +
+                                                    widget.albumList[index]
+                                                        ['image'],
+                                                height: 250,
+                                                width: 300,
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
-                                            fit: BoxFit.cover,
-                                          ),
+                                            Text(
+                                              widget.albumList[index]['title'],
+                                              style: TextStyle(fontSize: 15),
+                                            ),
+                                            IconButton(
+                                                icon: Icon(Icons.play_arrow),
+                                                onPressed: () {
+                                                  _play();
+                                                })
+                                          ],
                                         ),
-                                        child: AnimatedContainer(
-                                          duration: Duration(milliseconds: 400),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            gradient: LinearGradient(
-                                                begin: Alignment.center,
-                                                end: Alignment.bottomCenter,
-                                                colors: [
-                                                  Colors.transparent,
-                                                  Colors.black.withOpacity(0.6)
-                                                ]),
-                                          ),
-                                          child: AnimatedContainer(
-                                            duration:
-                                                Duration(milliseconds: 400),
-                                            padding: const EdgeInsets.all(15.0),
-                                            child: LeftAnimation(
-                                              1 + (index / 100),
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: <Widget>[
-                                                      ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        child: BackdropFilter(
-                                                          filter:
-                                                              ImageFilter.blur(
-                                                                  sigmaX: 10,
-                                                                  sigmaY: 10),
-                                                          child: Container(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        10,
-                                                                    vertical:
-                                                                        5),
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .white
-                                                                    .withOpacity(
-                                                                        .15),
-                                                                border: Border.all(
-                                                                    color: Colors
-                                                                        .white
-                                                                        .withOpacity(
-                                                                            0.15),
-                                                                    width: 1),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            12),
-                                                                boxShadow: [
-                                                                  BoxShadow(
-                                                                      blurRadius:
-                                                                          20,
-                                                                      offset:
-                                                                          Offset(
-                                                                              0,
-                                                                              10),
-                                                                      color: Color(
-                                                                              0xFF000102)
-                                                                          .withOpacity(
-                                                                              0.25))
-                                                                ]),
-                                                            child: Text(
-                                                              content['data'][
-                                                                          index]
-                                                                      ['albums']
-                                                                  ['title'],
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 10),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      index <= 4
-                                                          ? Container(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          10,
-                                                                      vertical:
-                                                                          5),
-                                                              decoration:
-                                                                  BoxDecoration(
+                                      ),
+                                    ));
+                          },
+                          child: Transform.scale(
+                            scale: scale,
+                            child: AnimatedOpacity(
+                              duration: Duration(milliseconds: 400),
+                              opacity: widget.opacity.value,
+                              child: AnimatedContainer(
+                                  duration: Duration(milliseconds: 400),
+                                  width: 186,
+                                  height: 180,
+                                  margin: EdgeInsets.only(left: 3, bottom: 10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[900],
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.black.withOpacity(0.45),
+                                          blurRadius: 5,
+                                          offset: Offset(0, 2.5))
+                                    ],
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                        'http://167.71.44.144/admin/_lib/file/img/' +
+                                            widget.albumList[index]['image'],
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  child: AnimatedContainer(
+                                    duration: Duration(milliseconds: 400),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      gradient: LinearGradient(
+                                          begin: Alignment.center,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.transparent,
+                                            Colors.black.withOpacity(0.6)
+                                          ]),
+                                    ),
+                                    child: AnimatedContainer(
+                                      duration: Duration(milliseconds: 400),
+                                      padding: const EdgeInsets.all(15.0),
+                                      child: LeftAnimation(
+                                        1 + (index / 100),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  child: BackdropFilter(
+                                                    filter: ImageFilter.blur(
+                                                        sigmaX: 10, sigmaY: 10),
+                                                    child: Container(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 10,
+                                                              vertical: 5),
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.white
+                                                              .withOpacity(.15),
+                                                          border: Border.all(
+                                                              color: Colors
+                                                                  .white
+                                                                  .withOpacity(
+                                                                      0.15),
+                                                              width: 1),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                                blurRadius: 20,
+                                                                offset: Offset(
+                                                                    0, 10),
                                                                 color: Color(
-                                                                    0xffFD6465),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            12),
-                                                              ),
-                                                              child: Text(
-                                                                'YENİ',
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        8),
-                                                              ))
-                                                          : Container(),
-                                                    ],
+                                                                        0xFF000102)
+                                                                    .withOpacity(
+                                                                        0.25))
+                                                          ]),
+                                                      child: Text(
+                                                        widget.albumTitle,
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 10),
+                                                      ),
+                                                    ),
                                                   ),
-                                                  Align(
-                                                    alignment: Alignment.center,
-                                                    child: Stack(
-                                                      children: <Widget>[
-                                                        ClipRRect(
+                                                ),
+                                                index <= 4
+                                                    ? Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 5),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xffFD6465),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                        ),
+                                                        child: Text(
+                                                          'YENİ',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 8),
+                                                        ))
+                                                    : Container(),
+                                              ],
+                                            ),
+                                            Align(
+                                              alignment: Alignment.center,
+                                              child: Stack(
+                                                children: <Widget>[
+                                                  ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            100),
+                                                    child: BackdropFilter(
+                                                      filter: ImageFilter.blur(
+                                                          sigmaX: 5, sigmaY: 5),
+                                                      child: Container(
+                                                        width: 50,
+                                                        height: 50,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.black
+                                                              .withOpacity(0.4),
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(
                                                                       100),
-                                                          child: BackdropFilter(
-                                                            filter: ImageFilter
-                                                                .blur(
-                                                                    sigmaX: 5,
-                                                                    sigmaY: 5),
-                                                            child: Container(
-                                                              width: 50,
-                                                              height: 50,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .black
-                                                                    .withOpacity(
-                                                                        0.4),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            100),
-                                                              ),
-                                                            ),
-                                                          ),
                                                         ),
-                                                        Positioned(
-                                                          width: 54,
-                                                          height: 50,
-                                                          child: Icon(
-                                                            SFSymbols.play_fill,
-                                                            color: Colors.white,
-                                                            size: 30,
-                                                          ),
-                                                        ),
-                                                      ],
+                                                      ),
                                                     ),
                                                   ),
-                                                  Text(
-                                                    content['data'][index]
-                                                        ['title'],
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        letterSpacing: 2,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 14),
+                                                  Positioned(
+                                                    width: 54,
+                                                    height: 50,
+                                                    child: Icon(
+                                                      SFSymbols.play_fill,
+                                                      color: Colors.white,
+                                                      size: 30,
+                                                    ),
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                          ),
-                                        )),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      } else {
-                        return Center(
-                            child: isPlay
-                                ? Lottie.asset(
-                                    'https://assets6.lottiefiles.com/packages/lf20_ZeRz5S.json',
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(
-                                    height: 100,
-                                  ));
-                      }
+                                            Text(
+                                              widget.albumList[index]['title'],
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  letterSpacing: 2,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )),
+                            ),
+                          ),
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -712,7 +699,7 @@ class _PlayListState extends State<PlayList>
                 opacity: isComplated ? 1 : 0,
                 child: Center(
                     child: Container(
-                  height: isComplated ? 100 : 0,
+                  height: isComplated ? 200 : 0,
                   child: Lottie.network(
                       'https://assets6.lottiefiles.com/packages/lf20_ZeRz5S.json',
                       width: 100),
@@ -1313,7 +1300,7 @@ class _PlayListState extends State<PlayList>
                                     fontWeight: FontWeight.bold)),
                           ),
                           Text(
-                            'Album : $album',
+                            'Album : ' + widget.albumTitle,
                             style: GoogleFonts.alegreyaSans(
                                 textStyle: TextStyle(
                               color: Colors.black87,

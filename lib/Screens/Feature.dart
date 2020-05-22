@@ -42,12 +42,18 @@ class _FeatureState extends State<Feature> {
   }
 
   List images = [
-    'assets/images/isa.jpg',
-    'assets/images/isa3.jpg',
-    'assets/images/isa3.jpg',
-    'assets/images/isanew.jpg',
-    'assets/images/isa3.jpg',
-    'assets/images/isa3.jpg'
+    // 'assets/images/isa.jpg',
+    // 'assets/images/isa3.jpg',
+    // 'assets/images/isa3.jpg',
+    // 'assets/images/isanew.jpg',
+    // 'assets/images/isa3.jpg',
+    // 'assets/images/isa3.jpg'
+    'assets/images/raining-in-the-city-2448749.jpg',
+    'assets/images/raining-in-the-city-2448749.jpg',
+    'assets/images/raining-in-the-city-2448749.jpg',
+    'assets/images/raining-in-the-city-2448749.jpg',
+    'assets/images/raining-in-the-city-2448749.jpg',
+    'assets/images/raining-in-the-city-2448749.jpg',
   ];
 
   List colors = [
@@ -99,8 +105,8 @@ class _FeatureState extends State<Feature> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(colors: [
                       Colors.transparent,
-                      Color(0xFF0B0D2B).withOpacity(0.6),
-                      Color(0xFF0B0D2B)
+                      Color(0xFF1D1D1D).withOpacity(0.6),
+                      Color(0xFF1D1D1D)
                     ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
                   ),
                 ),
@@ -166,7 +172,7 @@ class _FeatureState extends State<Feature> {
                 ),
               ),
               Positioned(
-                  top: 30,
+                  top: 50,
                   right: 20,
                   child: Transform.scale(
                     scale: tapped,
@@ -174,8 +180,8 @@ class _FeatureState extends State<Feature> {
                       6,
                       AnimatedContainer(
                         duration: Duration(milliseconds: 500),
-                        height: 50,
-                        width: 50,
+                        height: 40,
+                        width: 40,
                         decoration: BoxDecoration(
                           color: Color(0xfffffff),
                           borderRadius: BorderRadius.circular(50),
@@ -199,7 +205,7 @@ class _FeatureState extends State<Feature> {
                     ),
                   )),
               Positioned(
-                top: 30,
+                top: 50,
                 left: 20,
                 child: FadeAnimation(
                   6,
@@ -211,7 +217,7 @@ class _FeatureState extends State<Feature> {
                     ),
                     child: Lottie.asset(
                       'assets/11470-loading-lines.json',
-                      width: 30,
+                      width: 20,
                     ),
                   ),
                 ),

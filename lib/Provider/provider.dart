@@ -1,12 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:isa_telci/Services/api_service.dart';
 
+enum PlayerState { stopped, playing, paused }
+enum PlayingRouteState { speakers, earpiece }
+
 class MyProvider with ChangeNotifier {
   bool _isShow = false;
   bool get isShow => _isShow;
 
   set setIsShow(bool val) {
     _isShow = val;
+    notifyListeners();
+  }
+
+  bool _isSlide = false;
+  bool get isSlide => _isSlide;
+
+  set setisSlide(bool val) {
+    _isSlide = val;
+    notifyListeners();
+  }
+
+  bool _isSlideCat = false;
+  bool get isSlideCat => _isSlideCat;
+
+  set setisSlideCat(bool val) {
+    _isSlideCat = val;
+    notifyListeners();
+  }
+
+  int _selectedIndex = -1;
+  int get selectedIndex => _selectedIndex;
+
+  set setselectedIndex(int val) {
+    _selectedIndex = val;
+    notifyListeners();
+  }
+
+  int _selectedCatIndex = -1;
+  int get selectedCatIndex => _selectedCatIndex;
+
+  set setselectedCatIndex(int val) {
+    _selectedCatIndex = val;
     notifyListeners();
   }
 

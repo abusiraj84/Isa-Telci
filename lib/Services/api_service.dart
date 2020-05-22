@@ -25,7 +25,7 @@ class ApiService {
     }
   }
 
-  Future<Map> a(int id) async {
+  Future<Map> getAlbumById(int id) async {
     final response = await client.get('http://167.71.44.144/api/albums/$id');
     if (response.statusCode == 200) {
       return json.decode(response.body);
